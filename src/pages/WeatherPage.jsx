@@ -6,6 +6,7 @@ import WeatherCard from '../components/WeatherCard';
 import ForecastCard from '../components/ForecastCard';
 import SearchBar from '../components/SearchBar';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import WeatherBackground from '../components/WeatherBackground';
 
 const WeatherPage = () => {
   const { city } = useParams();
@@ -38,18 +39,20 @@ const WeatherPage = () => {
   }, [city]);
 
   if (loading) return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6 min-h-screen">
+      <WeatherBackground condition="clear" />
       <LoadingSkeleton />
     </div>
   );
 
   if (error) return (
-    <div className="max-w-5xl mx-auto p-6 text-center">
-      <div className="bg-red-500/10 border border-red-500/20 rounded-3xl p-12 text-white">
-        <AlertCircle size={64} className="mx-auto text-red-400 mb-6" />
+    <div className="relative min-h-screen flex items-center justify-center p-6 text-center">
+      <WeatherBackground condition="clouds" />
+      <div className="relative z-10 bg-white/40 backdrop-blur-2xl border border-white/50 rounded-3xl p-12 text-slate-800 shadow-2xl max-w-xl">
+        <AlertCircle size={64} className="mx-auto text-red-500 mb-6" />
         <h2 className="text-3xl font-bold mb-4">Oops! {error}</h2>
-        <p className="text-white/60 mb-8">We couldn't find the city "{city}". Please check the spelling and try again.</p>
-        <Link to="/" className="inline-flex items-center gap-2 bg-white text-slate-900 px-6 py-3 rounded-xl font-bold hover:bg-white/90 transition-colors">
+        <p className="text-slate-600 mb-8 font-medium">We couldn't get the data for "{city}". Please check your connection or city name.</p>
+        <Link to="/" className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30">
           <ChevronLeft size={20} />
           Go Back Home
         </Link>
@@ -58,19 +61,25 @@ const WeatherPage = () => {
   );
 
   return (
-    <div className="max-w-5xl mx-auto p-6 pb-20">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
-        <Link to="/" className="text-white/60 hover:text-white flex items-center gap-2 transition-colors">
-          <ChevronLeft size={24} />
-          <span className="text-lg font-medium">Home</span>
-        </Link>
-        <div className="w-full max-w-sm">
-          <SearchBar initialValue={city} />
+    <div className="relative min-h-screen pb-20">
+      <WeatherBackground condition={currentData.weather[0].main} />
+      
+      <div className="relative z-10 max-w-5xl mx-auto p-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+          <Link to="/" className="text-slate-700 hover:text-blue-600 flex items-center gap-2 transition-all group">
+            <div className="p-2 bg-white/40 backdrop-blur-md rounded-lg group-hover:bg-white/60 transition-colors">
+              <ChevronLeft size={24} />
+            </div>
+            <span className="text-lg font-bold">Back to Search</span>
+          </Link>
+          <div className="w-full max-w-sm">
+            <SearchBar initialValue={city} />
+          </div>
         </div>
-      </div>
 
-      <WeatherCard data={currentData} />
-      <ForecastCard data={forecastData} />
+        <WeatherCard data={currentData} />
+        <ForecastCard data={forecastData} />
+      </div>
     </div>
   );
 };

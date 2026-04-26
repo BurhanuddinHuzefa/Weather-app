@@ -12,19 +12,15 @@ const SearchBar = ({ initialValue = "" }) => {
 
   useEffect(() => {
     if (query.trim().length > 0) {
-      // 1. First find cities that START with the query
       const startMatches = POPULAR_CITIES.filter(city => 
         city.toLowerCase().startsWith(query.toLowerCase())
       ).sort();
 
-      // 2. If we need more, find cities that CONTAIN the query (but don't start with it)
       const containMatches = POPULAR_CITIES.filter(city => 
         city.toLowerCase().includes(query.toLowerCase()) && 
         !city.toLowerCase().startsWith(query.toLowerCase())
       ).sort();
 
-      // Combine them: If we have prefix matches, only show those.
-      // If no prefix matches, show substring matches.
       const combined = startMatches.length > 0 
         ? startMatches.slice(0, 5) 
         : containMatches.slice(0, 5);
@@ -60,8 +56,8 @@ const SearchBar = ({ initialValue = "" }) => {
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto" ref={searchRef}>
-      <form onSubmit={handleSearch} className="relative">
+    <div className="relative z-50 w-full max-w-md" ref={searchRef}>
+      <form onSubmit={handleSearch} className="relative group">
         <input
           type="text"
           value={query}
@@ -71,18 +67,18 @@ const SearchBar = ({ initialValue = "" }) => {
           }}
           onFocus={() => setShowSuggestions(true)}
           placeholder="Search for a city..."
-          className="w-full px-4 py-3 pl-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+          className="w-full px-6 py-4 pl-14 bg-white/50 backdrop-blur-xl border-2 border-white/80 rounded-[2rem] text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-400/20 transition-all shadow-lg hover:shadow-xl hover:bg-white/70"
         />
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" size={20} />
+        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={24} />
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute w-full mt-2 bg-slate-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50">
+        <div className="absolute w-full mt-3 bg-white border border-white/60 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] overflow-hidden z-[1000] animate-in fade-in zoom-in-95 duration-200">
           {suggestions.map((city, index) => (
             <button
               key={index}
               onClick={() => handleSelectCity(city)}
-              className="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-colors border-b border-white/5 last:border-0"
+              className="w-full px-6 py-4 text-left text-slate-700 hover:bg-blue-500 hover:text-white transition-all border-b border-slate-100 last:border-0 font-medium"
             >
               {city}
             </button>
